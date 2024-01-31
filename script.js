@@ -1,32 +1,54 @@
-function game() {
-  let playerScore = 0;
-  let computerScore = 0;
+let playerScore = 0;
+let computerScore = 0;
 
-  for (let round = 1; round <= 5; round++) {
-    const playerSelection = prompt("Round " + round + ": Enter 'Rock', 'Paper', or 'Scissors'");
-    const computerSelection = getComputerChoice();
-
-    const roundResult = playRound(playerSelection, computerSelection);
-
-    if (roundResult.includes('Win')) {
-      playerScore++;
-    } else if (roundResult.includes('Lose')) {
-      computerScore++;
-    }
-  }
-
+function updateResult(resultText) {
   const resultElement = document.getElementById('result');
-  resultElement.innerHTML = `
-    <p>Game Over!</p>
-    <p>Player Score: ${playerScore}</p>
-    <p>Computer Score: ${computerScore}</p>
-    <p>${playerScore > computerScore ? 'You win the game!' : (computerScore > playerScore ? 'You lose the game!' : 'It\'s a tie game!')}</p>
-  `;
+  resultElement.innerHTML = resultText;
 }
 
-function startGame() {
-  game();
-  alert("Game Over! Check the result below.");
+function checkWinner() {
+  if (playerScore === 5) {
+    updateResult("Congratulations! You are the winner!");
+    resetScores();
+  } else if (computerScore === 5) {
+    updateResult("Oops! Computer is the winner. Try again!");
+    resetScores();
+  }
+}
+
+function resetScores() {
+  playerScore = 0;
+  computerScore = 0;
+  updateScoreDisplay();
+}
+
+function updateScoreDisplay() {
+  const scoreElement = document.getElementById('score');
+  scoreElement.innerHTML = `Player Score: ${playerScore} - Computer Score: ${computerScore}`;
+}
+
+function makeSelection(playerSelection) {
+  if (playerScore === 5 || computerScore === 5) {
+    // Game already won, reset scores
+    resetScores();
+  }
+
+  const computerSelection = getComputerChoice();
+  const roundResult = playRound(playerSelection, computerSelection);
+
+  if (roundResult.includes('Win')) {
+    playerScore++;
+  } else if (roundResult.includes('Lose')) {
+    computerScore++;
+  }
+
+  const resultText = `
+    <p>${roundResult}</p>
+    `;
+  
+  updateScoreDisplay();
+  updateResult(resultText);
+  checkWinner();
 }
 
 function getComputerChoice() {
